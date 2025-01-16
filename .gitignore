@@ -1,0 +1,3 @@
+# ignore data directory due to large size
+# code for downloading the image data is provided
+data/
