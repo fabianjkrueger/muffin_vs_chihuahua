@@ -1,0 +1,10 @@
+- title image in README.md: https://cdn-media-1.freecodecamp.org/images/1*bt-E2YcPafjiPbZFDMMmNQ.jpeg
+- original meme (large size): https://miro.medium.com/v2/resize:fit:752/0*OsSLuNhChRgEWWZM.jpg
+- dogs or food grid: https://topb0ts.wpenginepowered.com/wp-content/uploads/2017/09/TOPBOTS_dogs_or_food_600px_web.jpg
+- misclassification_googlecloudvision2016: https://i.imgur.com/Krp9z3N.png
+- Barn owl vs Apple: https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.beano.com%2Fwp-content%2Fuploads%2Flegacy%2F4636_owl-or-apple.jpg%3Fquality%3D76%26strip%3Dall&f=1&nofb=1&ipt=058e5a569aab108ee831657d2ce55699bbb831613452781a495fb18de194889d&ipo=images
+- puppy vs bagel: https://imgix.ranker.com/user_node_img/50060/1001184415/original/1-photo-u1?auto=format&q=60&fit=crop&fm=pjpg&dpr=2&w=500
+- Fried Chicken or Labradoodle: https://imgix.ranker.com/user_node_img/50060/1001184423/original/1-photo-u1?auto=format&q=60&fit=crop&fm=pjpg&dpr=2&w=500
+- Shiba Inu or Marshmallow: https://imgix.ranker.com/user_node_img/50060/1001184433/original/1-photo-u1?auto=format&q=60&fit=crop&fm=pjpg&dpr=2&w=500
+- Kitten or Ice Cream: https://imgix.ranker.com/user_node_img/50060/1001184412/original/1-photo-u1?auto=format&q=60&fit=crop&fm=pjpg&dpr=2&w=500
+- Parrot or Guacamole: https://imgix.ranker.com/user_node_img/50060/1001184421/original/1-photo-u1?auto=format&q=60&fit=crop&fm=pjpg&dpr=2&w=500
