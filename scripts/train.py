@@ -43,7 +43,7 @@ PATH_FINAL_MODEL = PATH_MODELS / "final_model.pth"
 
 # training hyper parameters
 BATCH_SIZE = 32
-N_EPOCHS = 2 # FIXME: change back to 50 - 2 is used for prototyping
+N_EPOCHS = 50
 LEARNING_RATE = 0.001
 EARLY_STOPPING_PATIENCE = 7
 EARLY_STOPPING_MIN_DELTA = 0.001
