@@ -9,6 +9,7 @@ determined hyper parameters from train.ipynb.
 # ------------
 
 # standard library imports
+import logging
 from pathlib import Path
 from PIL import Image
 from statistics import mean, stdev
@@ -32,12 +33,6 @@ device = (
     else "cpu" # for CPU
 )
 
-# print which device is being used
-if device == "cpu":
-    print("No GPU available. Training on CPU.")
-elif device == "mps" or device == "cuda":
-    print(f"{device.capitalize()} available. Training on GPU.")
-
 # paths
 PATH_REPO = Path(__file__).parent.parent
 PATH_DATA = PATH_REPO / "data/processed"
@@ -46,11 +41,12 @@ PATH_TEST = PATH_DATA / "test"
 PATH_MODELS = PATH_REPO / "models"
 PATH_FINAL_MODEL = PATH_MODELS / "final_model.pth"
 
-# training parameters
-# size of training batches
+# training hyper parameters
 BATCH_SIZE = 32
-# number of epochs to train for
 N_EPOCHS = 2 # FIXME: change back to 50 - 2 is used for prototyping
+LEARNING_RATE = 0.001
+EARLY_STOPPING_PATIENCE = 7
+EARLY_STOPPING_MIN_DELTA = 0.001
 
 # image transformations
 TRANSFORM = transforms.Compose([
@@ -71,9 +67,9 @@ class EarlyStopping:
     """Early stopping to prevent overfitting"""
     
     def __init__(self,
-        patience=7,
-        min_delta=0,
-        path='checkpoint.pt'
+        patience=EARLY_STOPPING_PATIENCE,
+        min_delta=EARLY_STOPPING_MIN_DELTA,
+        path=PATH_MODELS / "final_model_hpo_checkpoint.pt"
     ):
         """
         Args:
@@ -340,192 +336,124 @@ def evaluate_model(
 # Main
 # ----
 
-
-# recreate datasets with new loader and transforms
-train_dataset = datasets.ImageFolder(
-    PATH_TRAIN,
-    loader=custom_loader,
-    transform=TRANSFORM
-)
-test_dataset = datasets.ImageFolder(
-    PATH_TEST,
-    loader=custom_loader,
-    transform=TRANSFORM
-)
-
-# create dataloaders
-train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE)
-
-
-# print some basic info
-print(f"number of training images: {len(train_dataset)}")
-print(f"number of test images: {len(test_dataset)}")
-print(f"classes: {train_dataset.classes}")
-
-
-# load pre-trained ResNet18 to an object
-# this model was pre-trained on ImageNet on 1000 classes
-model_baseline = models.resnet18(weights="IMAGENET1K_V1")
-
-# freeze all layers
-# this preserves the feature extraction capabilities learned from ImageNet
-for param in model_baseline.parameters():
-    param.requires_grad = False
-
-
-# modify the final layer for binary classification
-# this replaces the final fully connected layer (fc) (hence: model.*fc*)
-# the original fc had 1000 output probabilities (bc. trained on 1000 classes)
-# here, there's just two classes (muffins and chihuahuas) -> replace
-# get number of input features to fc
-num_features = model_baseline.fc.in_features
-# replace with new layer matching input features and output classes
-model_baseline.fc = nn.Linear(num_features, 2) # 2 classes: muffin and chihuahua
-
-# move model to GPU
-model_baseline = model_baseline.to(device)
-
-# define loss function and optimizer
-# Cross Entropy Loss is well suited and widely used for classification problems
-criterion = nn.CrossEntropyLoss()
-
-# only optimize the parameters of the final layer since others are frozen
-# start with a static learning rate (lr) of 0.001
-optimizer = optim.Adam(model_baseline.fc.parameters(), lr=0.001)
-
-
-
-# initialize early stopping object
-    # patience
-    # 7 is within range of 5 - 20 commonly used in practice
-    # has enough buffer to prevent stopping too early due to temporary plateaus
-    # not too large to waste computational resources
-    # min_delta
-    # 0.001 is commonly used in practice
-    # small enough to catch meaninful improvements
-early_stopping_baseline = EarlyStopping(
-    patience=7,
-    min_delta=0.001,
-    path=PATH_MODELS / "model_checkpoint_baseline.pt"
-)
-
-# initialize dictionary for training history
-history = {
-    'train_loss': [],
-    'train_acc': [],
-    'val_metrics': []
-}
-
-# train and validate for n_epochs
-for epoch in range(N_EPOCHS):
+def main():
     
-    # train for one epoch
-    train_loss, train_acc = train_one_epoch(
-        model_baseline,
-        train_loader,
-        criterion,
-        optimizer,
-        device
+    
+    # print which device is being used
+    if device == "cpu":
+        print("No GPU available. Training on CPU.")
+    elif device == "mps" or device == "cuda":
+        print(f"{device.capitalize()} available. Training on GPU.")
+
+
+    # recreate datasets with new loader and transforms
+    train_dataset = datasets.ImageFolder(
+        PATH_TRAIN,
+        loader=custom_loader,
+        transform=TRANSFORM
     )
-    
-    # validate 
-    val_metrics = validate(
-        model_baseline,
-        test_loader,
-        criterion,
-        device
+    test_dataset = datasets.ImageFolder(
+        PATH_TEST,
+        loader=custom_loader,
+        transform=TRANSFORM
     )
-    
-    # store history
-    history['train_loss'].append(train_loss)
-    history['train_acc'].append(train_acc)
-    history['val_metrics'].append(val_metrics)
-    
-    print(f"Epoch {epoch+1}/{N_EPOCHS}:")
-    print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%")
-    print(
-        f"Val Loss: {val_metrics['val_loss']:.4f}, "
-        f"Val Acc: {val_metrics['val_acc']:.2f}%"
+
+    # create dataloaders
+    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE)
+
+    # print info about training data
+    print(f"number of training images: {len(train_dataset)}")
+    print(f"number of test images: {len(test_dataset)}")
+    print(f"classes: {train_dataset.classes}")
+
+    # initialize model
+    model = models.resnet18(weights="IMAGENET1K_V1")
+
+    # freeze layers
+    for param in model.parameters():
+        param.requires_grad = False
+        
+    # modify final layer for binary classification
+    num_features = model.fc.in_features
+    model.fc = nn.Linear(num_features, 2)
+
+    # move model to GPU
+    model = model.to(device)
+
+    # setup training
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.fc.parameters(), lr=LEARNING_RATE)
+    early_stopping_baseline = EarlyStopping(
+        patience=7,
+        min_delta=0.001,
+        path=PATH_MODELS / "model_checkpoint_baseline.pt"
     )
+
+    # training loop
+    history = {'train_loss': [], 'train_acc': [], 'val_metrics': []}
+
+    for epoch in range(N_EPOCHS):
+        
+        # train for one epoch
+        train_loss, train_acc = train_one_epoch(
+            model,
+            train_loader,
+            criterion,
+            optimizer,
+            device
+        )
+        
+        # validate 
+        val_metrics = validate(
+            model,
+            test_loader,
+            criterion,
+            device
+        )
+        
+        # store history
+        history['train_loss'].append(train_loss)
+        history['train_acc'].append(train_acc)
+        history['val_metrics'].append(val_metrics)
+        
+        print(f"Epoch {epoch+1}/{N_EPOCHS}:")
+        print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%")
+        print(
+            f"Val Loss: {val_metrics['val_loss']:.4f}, "
+            f"Val Acc: {val_metrics['val_acc']:.2f}%"
+        )
+        print("-" * 50)
+        
+        # check early stopping
+        early_stopping_baseline(val_metrics['val_loss'], model)
+        if early_stopping_baseline.early_stop:
+            print(f"Early stopping triggered at epoch {epoch + 1}")
+            model.load_state_dict(early_stopping_baseline.best_model)
+            break
+
+    # set the model to evaluation mode
+    model.eval()
+
+    # evaluate model on test set
+    test_metrics = validate(
+        model,
+        val_loader=test_loader,
+        criterion=criterion,
+        device=device
+    )
+
+    # print results in a formatted way
+    print("\nFinal Test Set Metrics:")
     print("-" * 50)
-    
-    # check improvement in val loss for early stopping
-    early_stopping_baseline(val_metrics['val_loss'], model_baseline)
-    
-    # check if early stopping is triggered
-    # if there is no improvement for longer than patience, stop training
-    if early_stopping_baseline.early_stop:
-        print(f"Early stopping triggered at epoch {epoch + 1}")
-        # load best model from checkpoint
-        model_baseline.load_state_dict(early_stopping_baseline.best_model)
-        break
+    print(f"Test Loss:     {test_metrics['val_loss']:.4f}")
+    print(f"Test Accuracy: {test_metrics['val_acc']:.2f}%")
+    print(f"Test ROC AUC:  {test_metrics['val_roc_auc']:.4f}")
+    print(f"Test F1 Score: {test_metrics['val_f1']:.4f}")
 
 
-# get evaluation report
-# these are the averages of the batches
-metrics_val_baseline =evaluate_model(
-    model_baseline,
-    history["val_metrics"],
-    include_model_info=False
-)
-
-print(metrics_val_baseline)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# set the model to evaluation mode
-model_baseline.eval()
-
-# evaluate model on test set
-# use validate() instead of evaluate_model() because evaluation is necessary
-# only once on the test set, and does not need to be aggregated over runs
-test_metrics = validate(
-    model_baseline,
-    val_loader=test_loader,
-    criterion=criterion,
-    device=device
-)
-
-# print results in a formatted way
-print("\nFinal Test Set Metrics:")
-print("-" * 50)
-print(f"Test Loss:     {test_metrics['val_loss']:.4f}")
-print(f"Test Accuracy: {test_metrics['val_acc']:.2f}%")
-print(f"Test ROC AUC:  {test_metrics['val_roc_auc']:.4f}")
-print(f"Test F1 Score: {test_metrics['val_f1']:.4f}")
-
-
-
-
-
-
-
-
-# if __name__ == "__main__":
-#     main()
-
+# Main
+# ----
+if __name__ == "__main__":
+    main()
 
