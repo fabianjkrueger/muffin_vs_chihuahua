@@ -3,7 +3,12 @@ ml.py: Machine learning logic
 main.py: API endpoints and routing
 
 
-Build the Docker image: docker build -t image-classifier .
-Run the container: docker run -p 8000:8000 image-classifier
+```bash
+# build the docker image
+docker build -t muffin_vs_chihuahua_api .
+
+# run the docker image
+docker run -p 8000:8000 muffin_vs_chihuahua_api
+```
 
 Documentation: http://localhost:8000/docs

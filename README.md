@@ -102,8 +102,39 @@ data set.
 It's a ResNet18 convolutional network.
 It is not too bad so far, but full evaluation on the test set is pending.
 
+
+
+
+
+
+
+
+
+
+## How to get the code
+
+You can clone this repository from GitHub with this command:
+
+```bash
+git clone https://github.com/fabianjkrueger/muffin_vs_chihuahua
+```
+
+If you don't have git installed, you can get it
+[here](https://git-scm.com/downloads).
+
+
 ## Environment
-To build and activate the environment, just run this:
+
+The environment is managed with conda.
+To build and activate the environment, you need to have a conda installation
+(such as conda, miniconda, mamba or miniforge).
+If you don't have a conda installation, please install one first.
+I recommend [miniforge](https://github.com/conda-forge/miniforge),
+because it is an open source lightweight version of conda.
+The dependencies are listed in the file `environment.yaml`.
+
+**To build and activate the environment, just run this:**
+
 ```bash
 # build the environment from environment.yaml file
 conda env create -f environment.yaml
@@ -112,8 +143,136 @@ conda env create -f environment.yaml
 conda activate muffin_vs_chihuahua
 ```
 
+There is also a `requirements.txt` file in the `api` directory.
+It is used to install the dependencies for the API within the docker container.
+The dependencies there are reduced to the minimum to run the API, but they will
+not be sufficient to run the training code or the notebooks.
+So, please use the `environment.yaml` in conda to build and activate the
+environment.
+
 ## Data
-To download the data, just run the script `scripts/get_data.sh` in the terminal.
-You can run it from any working directory, because it manages the paths.
+
+The data used for this project is from Kaggle.
+It is a dataset of images of muffins and chihuahuas.
+You can find it [here](https://www.kaggle.com/datasets/samuelcortinhas/muffin-vs-chihuahua-image-classification/).
+
+### Download the Data
+
+The data is not included in the repository when you clone it from GitHub to
+save space.
+If you want to run the code yourself, you have to download the data.
+There are multiple ways to do this.
+For example, you can download it manually from the Kaggle website.
+But I made it easy for you: There is a script in the `scripts` directory that
+will download the data for you.
+To download the data, just run the script `scripts/get_data.sh` in your
+terminal and you're done good to go.
+You can run it from any working directory, because paths are managed internally.
+
+```bash
+# run the script
+bash scripts/get_data.sh
+```
+
+If you use a shell other than bash, you can also run the script with
+`sh` or `zsh` or whatever you use, as long as it is a POSIX compatible shell.
+If you're on Windows, you can use the Windows Subsystem for Linux (WSL) to run
+bash scripts.
+
+### Process the Data
+
+Notebook: `notebooks/exploratory_data_analysis.ipynb`
+Here, the images are resized to 224x224 pixels.
+This step is necessary for the downstream training.
+Beyond that, the data is explored and visualized.
+While this is not necessary for you to reproduce the results,
+it is useful for you to understand the data and the problem.
+
+## How to train the model
+
+This is the pipeline for training the model.
+If you just want to use the model, you don't need to run this.
+For that, you can just use the API as described in the next section.
+If you want to reproduce the results, you can run the code in this order:
+
+### Hyper Parameter Optimization
+Notebook: `notebooks/training.ipynb`
+This notebook conducts a hyper parameter optimization.
+It is not necessary for you to reproduce the results,
+but it is useful for you to understand the problem and the solution.
+The best hyper parameters were already determined in the notebook and
+applied to the training script.
+This one runs quite a while, so I do not recommend running it.
+
+### Train the model
+The final model is saved to the `models` directory.
+It is named `final_model.pt`.
+You don't have to run the trainig logic, because you can just access the
+model in the repo.
+
+However, if you do want to train it yourself, use the script
+`scripts/train.py`.
+Just run it from the command line with `python scripts/train.py`.
+This trains the final model with the best hyperparameters determined in the
+previous step.
+Output is logged to the terminal
+and the file `logs/final_model_train.log`.
+
+This also evaluates the model on the test set and logs the results to the
+file `logs/final_model_test.log`.
+
+## Deploy the model
+
+Here, the model is hosted as an API with FastAPI.
+It can be run locally in a docker container.
+While FastAPI is included in the conda environment,
+Docker must be installed on your machine to run the API.
+If you don't have docker installed, you can get it
+[here](https://www.docker.com/get-started/).
+
+### Run the API
+
+To run the API, you can use the following commands:
+
+```bash
+# build the docker image
+docker build -t muffin_vs_chihuahua_api .
+
+# run the docker image
+docker run -p 8000:8000 muffin_vs_chihuahua_api
+```
+
+Documentation for the API can be found [here](http://localhost:8000/docs) once
+it is running.
+
+### Query the API
+
+The API can be queried with a simple HTTP request.
+I implemented a test case for you, so you can just host it and query it.
+You can find it in the notebook `notebooks/test_api.ipynb`.
+Just open that notebook and run the cells.
+You will find further information and instructions in the notebook.
 
 
+# TODO
+- Check EDA notebook and see if the markdown parts can all be used
+- Finish texts in the training notebook
+- Finalize description of the project
+  - Problem is described in the README so it's clear what the problem is and how
+  the solution will be used
+- Make the notebook for testing the API a bit more user friendly
+  - Save one or a few images to the `images` directory and load them from there
+    so that the user can run it without having to download the entire dataset
+
+
+- Check once again if everything works and is reproducible
+  - Making the environment from the yaml file
+  - Running the scripts
+  - Running the notebooks
+  - Running the API
+  - Querying the API
+
+- Funny part of the project
+  - Split the meme into the individual images
+  - Query the model with all of them and the combined one to see how it does
+  - Declare the problem solved or not
