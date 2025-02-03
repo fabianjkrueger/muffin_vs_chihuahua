@@ -1,3 +1,9 @@
 # ignore data directory due to large size
 # code for downloading the image data is provided
 data/
+
+# ignore model checkpoints
+# only final model is used
+models/model_checkpoint_*.pt
+models/final_model_checkpoint.pt
+
