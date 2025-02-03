@@ -43,7 +43,7 @@ PATH_DATA = PATH_REPO / "data/processed"
 PATH_TRAIN = PATH_DATA / "train"
 PATH_TEST = PATH_DATA / "test"
 PATH_MODELS = PATH_REPO / "models"
-PATH_FINAL_MODEL = PATH_MODELS / "final_model.pth"
+PATH_FINAL_MODEL = PATH_MODELS / "final_model.pt"
 PATH_CHECKPOINT = PATH_MODELS / "final_model_checkpoint.pt"
 PATH_LOGS = PATH_REPO / "logs" / "final_model_train.log"
 
