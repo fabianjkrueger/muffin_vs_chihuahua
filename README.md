@@ -5,49 +5,115 @@
 ## Project Description
 
 ### Problem and Origin
+
 There is a semi popular meme about the claim that computer vision models have
-difficulties distinguishing models from chihuahuas. There are even more
-examples like this, for example one in which poodles look like fried chicken.
-As you can see, the muffins and the dogs do in fact look similar if the photo
-was taken in the right angle, and it isn't hard to imagine a computer may have
-difficulties distinguishing between them.
+difficulties distinguishing models from chihuahuas.
+
+<p align="center">
+  <img src="images/muffin-meme2.jpg"
+        width="50%"
+        alt="Muffin or Chihuahua Meme">
+</p>
+
+As you can see, the muffins and the dogs do in fact look similar.
+If the photo was taken in the right angle, and it isn't hard to imagine a
+computer may have difficulties distinguishing between them.
+
+For us humans it is easy to distinguish animals from food, because we can rely
+on intuition, but a computer vision model has to learn the subtle differences
+of the patterns.
+Regarding their shape, spatial arrangement, texture and color, images of these
+objects can be very similar.
+
+One example of an early computer vision model actually misclassifying a cookie
+for a pet was found when testing Google's Cloud Vision API in 2016:
+
+<p align="center">
+  <img src="images/misclassification_googlecloudvision2016.png"
+       width="50%"
+       alt="Google Cloud Vision API Misclassification">
+</p>
+
+But the question is if modern computer vision systems actually still
+struggle with this or if there is no truth to the meme anymore.
+Honestly, I am aware this problem is solved by now,
+but I think it's still worth exploring this meme using just a laptop
+and models you can fine-tune yourself.
+
+There are even more examples like the one with the muffins and chihuahuas.
+For example, this one in which poodles look like fried chicken.
+
+<p align="center">
+  <img src="images/Fried_Chicken_or_Labradoodle.jpg"
+       width="50%"
+       alt="Fried Chicken Meme">
+</p>
+
+Or these ones even including different animals like kittens and birds.
+
+<p align="center">
+  <table width="50%"
+  align="center"
+  border="0"
+  cellspacing="0"
+  cellpadding="0">
+    <tr>
+      <td><img src="images/owl_vs_apple.jpg"
+      width="100%"
+      alt="Barn Owl or Apple"></td>
+      <td><img
+      src="images/Kitten_or_Ice_Cream.jpg"
+      width="100%"
+      alt="Kitten or Ice Cream"></td>
+    </tr>
+    <tr>
+      <td><img src="images/Shiba_Inu_or_Marshmallow.jpg"
+      width="100%"
+      alt="Shiba Inu or Marshmallow"></td>
+      <td><img src="images/Parrot_or_Guacamole.jpg"
+      width="100%"
+      alt="Parrot or Guacamole"></td>
+    </tr>
+  </table>
+</p>
+
 
 In this project, I want to explore this meme a little and see myself
 if there is any truth to it.
-It is also important to know that the meme arose in 2017.
-Most likely, progress in the field made it much easier for modern models to
-deal with this.
+Again, it is important to know that these memes arose in 2017.
+While models in 2016 may have had difficulties with this,
+modern models should be able to handle it.
 Let's find out!
 
-Also regarding the description of how the model may be used: 
-Like this model isn't even useful for anything.
-I cannot imagine any situation in which it may be used.
-I doubt that there is a serious computer program in need of a model able to do
-perform binary classification between chihuahuas and muffins in the real world.
-This is more like an experiment or rather research project to explore
+Also regarding the description of how the model may be used:
+
+In the real world, I hardly doubt that the model which will be trained in this
+project is going to be useful for anything.
+I can hardly imagine a real world situation in which it may be used, or in which
+modern and more general computer vision models wouldn't probably be able to do 
+the job well enough.
+I doubt that there is a serious computer program in need of a model able to
+perform binary classification between muffins and chihuahuas.
+This is more like an experiment or hobby research project to explore
 different computer vision model's capacities and to get to the bottom of this
 meme.
 
 #### Further things to integrate in the README problem description
 
-- "is a fun way to illustrate the limits of computer vision systems"
-- include further pictures of animals vs food here
-- state that this is probably a solved problem by now, but in 2016/7 it was real
-- for us humans it is easy to distinguish between, because we can rely on 
-intuition, but for a model it can be difficult. regarding their form and color,
-these objects look very similar. AIs cannot rely on years of experience and
-doesn't initially "know" the subtle differences giving away the class like
-whiskers or the muffin cup
-- this is a popular meme in the ML community, and it is often shared in
-presentations. but the question is if modern computer vision systems actually
-struggle with this or if there is no truth to it
-- I could also test a non-fine-tuned ResNet18 for comparison and see what it
-predicts. that way I can assess how much benefit training it brought. maybe it
-is already good enough. however, there are much more classes, not just binary
-- the meme came up in 2016: 
-https://www.mirror.co.uk/news/weird-news/muffins-chihuahuas-bizarre-picture-quiz-7539743
 
 
+
+
+
+
+
+
+- [An article about the meme in 2016](
+    https://www.mirror.co.uk/news/weird-news/muffins-chihuahuas-bizarre-picture-quiz-7539743
+)
+- [Steren's Labs tries to confuse Google's Vision algorithms with dogs and muffins](
+    https://labs.steren.fr/2016/03/27/trying-to-confuse-googles-vision-algorithms-with-dogs-and-muffins/
+)
 - testing different AIs on this problem:
     - testing CloudSight (2017): classified it mostly correct
     as tested here: https://blog.cloudsight.ai/chihuahua-or-muffin-1bdf02ec1680
@@ -255,7 +321,7 @@ You will find further information and instructions in the notebook.
 
 
 # TODO
-- Check EDA notebook and see if the markdown parts can all be used
+
 - Finish texts in the training notebook
 - Finalize description of the project
   - Problem is described in the README so it's clear what the problem is and how
@@ -276,3 +342,18 @@ You will find further information and instructions in the notebook.
   - Split the meme into the individual images
   - Query the model with all of them and the combined one to see how it does
   - Declare the problem solved or not
+
+# Sources
+
+- [An article about the meme in 2016](
+    https://www.mirror.co.uk/news/weird-news/muffins-chihuahuas-bizarre-picture-quiz-7539743
+)
+- [Steren's Labs tries to confuse Google's Vision algorithms with dogs and muffins](
+    https://labs.steren.fr/2016/03/27/trying-to-confuse-googles-vision-algorithms-with-dogs-and-muffins/
+)
+- [CloudSight API tested on the meme](
+    https://blog.cloudsight.ai/chihuahua-or-muffin-1bdf02ec1680
+)
+- [TopBots tests a wide range of APIs in 2017](
+    https://www.topbots.com/chihuahua-muffin-searching-best-computer-vision-api/
+)
