@@ -3,16 +3,20 @@ Goal: Train and evaluate the final model
 
 This script handles the training of the final model using previously
 determined hyper parameters from train.ipynb.
+
+The training process is logged to the file logs/final_model_train.log.
+The path is specified in the PATH_LOGS variable, and can be adapted.
 """
 
 # Dependencies
 # ------------
 
 # standard library imports
-import logging
+import os
 from pathlib import Path
 from PIL import Image
 from statistics import mean, stdev
+import logging
 
 # third-party library imports
 import torch
@@ -40,6 +44,8 @@ PATH_TRAIN = PATH_DATA / "train"
 PATH_TEST = PATH_DATA / "test"
 PATH_MODELS = PATH_REPO / "models"
 PATH_FINAL_MODEL = PATH_MODELS / "final_model.pth"
+PATH_CHECKPOINT = PATH_MODELS / "final_model_checkpoint.pt"
+PATH_LOGS = PATH_REPO / "logs" / "final_model_train.log"
 
 # training hyper parameters
 BATCH_SIZE = 32
@@ -69,7 +75,7 @@ class EarlyStopping:
     def __init__(self,
         patience=EARLY_STOPPING_PATIENCE,
         min_delta=EARLY_STOPPING_MIN_DELTA,
-        path=PATH_MODELS / "final_model_hpo_checkpoint.pt"
+        path=PATH_CHECKPOINT
     ):
         """
         Args:
@@ -81,13 +87,19 @@ class EarlyStopping:
         """
         self.patience = patience
         self.min_delta = min_delta
+        self.epoch = None
+        self.best_epoch = None
         self.counter = 0
         self.best_loss = None
         self.early_stop = False
         self.path = path
         self.best_model = None
     
-    def __call__(self, val_loss: float, model: torch.nn.Module) -> None:
+    def __call__(
+        self,
+        epoch: int,
+        val_loss: float,
+        model: torch.nn.Module) -> None:
         """
         Check if validation loss has improved and save model if it has.
         
@@ -98,17 +110,26 @@ class EarlyStopping:
         Returns:
             None
         """
+        
+        # store epoch
+        self.epoch = epoch
+        
+        # first epoch
         if self.best_loss is None:
             self.best_loss = val_loss
+            self.best_epoch = epoch
             self.save_checkpoint(model)
-        elif val_loss > self.best_loss - self.min_delta:
+        # improvement
+        elif val_loss < self.best_loss - self.min_delta:
+            self.best_loss = val_loss
+            self.best_epoch = epoch
+            self.save_checkpoint(model)
+            self.counter = 0
+        # no improvement
+        else:
             self.counter += 1
             if self.counter >= self.patience:
                 self.early_stop = True
-        else:
-            self.best_loss = val_loss
-            self.save_checkpoint(model)
-            self.counter = 0
     
     def save_checkpoint(self, model: torch.nn.Module) -> None:
         """
@@ -338,13 +359,27 @@ def evaluate_model(
 
 def main():
     
+    # set up logging
+    # clear existing log file and write new one
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+        handlers=[
+            logging.FileHandler(PATH_LOGS, mode="w"),
+            logging.StreamHandler()
+        ]
+    )
+    
+    print("\n")
+    logging.info("Training final model...")
     
     # print which device is being used
     if device == "cpu":
-        print("No GPU available. Training on CPU.")
+        logging.info("No GPU available. Training on CPU...\n")
     elif device == "mps" or device == "cuda":
-        print(f"{device.capitalize()} available. Training on GPU.")
+        logging.info(f"{device.capitalize()} available. Training on GPU...\n")
 
+    logging.info("Loading datasets...")
 
     # recreate datasets with new loader and transforms
     train_dataset = datasets.ImageFolder(
@@ -362,33 +397,52 @@ def main():
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE)
 
-    # print info about training data
-    print(f"number of training images: {len(train_dataset)}")
-    print(f"number of test images: {len(test_dataset)}")
-    print(f"classes: {train_dataset.classes}")
+    # log info about training data
+    logging.info(f"Number of training images: {len(train_dataset)}")
+    logging.info(f"Number of test images: {len(test_dataset)}")
+    logging.info(f"Classes: {train_dataset.classes}\n")
+    
+    logging.info("Initializing model...")
 
     # initialize model
     model = models.resnet18(weights="IMAGENET1K_V1")
+
+    logging.info("Freezing layers...")
 
     # freeze layers
     for param in model.parameters():
         param.requires_grad = False
         
+    logging.info("Modifying final layer...")
+    
     # modify final layer for binary classification
     num_features = model.fc.in_features
     model.fc = nn.Linear(num_features, 2)
 
+    logging.info("Moving model to device...\n")
+
     # move model to GPU
     model = model.to(device)
+
+    logging.info("Setting up training...")
 
     # setup training
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.fc.parameters(), lr=LEARNING_RATE)
-    early_stopping_baseline = EarlyStopping(
-        patience=7,
-        min_delta=0.001,
-        path=PATH_MODELS / "model_checkpoint_baseline.pt"
+    early_stopping = EarlyStopping(
+        patience=EARLY_STOPPING_PATIENCE,
+        min_delta=EARLY_STOPPING_MIN_DELTA,
+        path=PATH_MODELS / "final_model_checkpoint.pt"
     )
+    
+    logging.info(f"Number of epochs: {N_EPOCHS}")
+    logging.info(f"Batch size: {BATCH_SIZE}")
+    logging.info(f"Early stopping patience: {EARLY_STOPPING_PATIENCE}")
+    logging.info(f"Early stopping min delta: {EARLY_STOPPING_MIN_DELTA}")
+    logging.info(f"Criterion: {criterion}")
+    logging.info(f"Optimizer: {optimizer}\n")
+
+    logging.info("Training model...")
 
     # training loop
     history = {'train_loss': [], 'train_acc': [], 'val_metrics': []}
@@ -417,20 +471,53 @@ def main():
         history['train_acc'].append(train_acc)
         history['val_metrics'].append(val_metrics)
         
-        print(f"Epoch {epoch+1}/{N_EPOCHS}:")
-        print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%")
-        print(
+        logging.info(f"Epoch {epoch+1}/{N_EPOCHS}:")
+        logging.info(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%")
+        logging.info(
             f"Val Loss: {val_metrics['val_loss']:.4f}, "
             f"Val Acc: {val_metrics['val_acc']:.2f}%"
         )
-        print("-" * 50)
+        logging.info("-" * 50)
         
         # check early stopping
-        early_stopping_baseline(val_metrics['val_loss'], model)
-        if early_stopping_baseline.early_stop:
-            print(f"Early stopping triggered at epoch {epoch + 1}")
-            model.load_state_dict(early_stopping_baseline.best_model)
+        early_stopping(
+            epoch=epoch,
+            val_loss=val_metrics['val_loss'],
+            model=model
+        )
+        if early_stopping.early_stop:
+            # log early stopping
+            logging.info(f"Early stopping triggered at epoch {epoch + 1}")
+            logging.info(f"Best epoch: {early_stopping.best_epoch + 1}")
+            logging.info(
+                f"Considered min delta of {EARLY_STOPPING_MIN_DELTA} "
+                f"for checking improvement in validation loss."
+            )
+            logging.info(
+                f"Validation metrics at epoch {early_stopping.best_epoch + 1}:"
+            )
+            logging.info(
+                f"Train Loss: "
+                f"{history['train_loss'][early_stopping.best_epoch]:.4f}, "
+                f"Train Acc: "
+                f"{history['train_acc'][early_stopping.best_epoch]:.2f}%"
+            )
+            best_loss = history['val_metrics'][early_stopping.best_epoch]['val_loss']
+            best_acc = history['val_metrics'][early_stopping.best_epoch]['val_acc']
+            logging.info(f"Val Loss: {best_loss:.4f}, Val Acc: {best_acc:.2f}%")
+            logging.info("-" * 50)
+            
+            # load best model
+            logging.info(
+                f"Loading best model from epoch "
+                f"{early_stopping.best_epoch + 1}..."
+            )
+            model.load_state_dict(early_stopping.best_model)
             break
+        
+    logging.info("Training complete.\n")
+
+    logging.info("Evaluating model on test set...")
 
     # set the model to evaluation mode
     model.eval()
@@ -443,14 +530,21 @@ def main():
         device=device
     )
 
-    # print results in a formatted way
-    print("\nFinal Test Set Metrics:")
-    print("-" * 50)
-    print(f"Test Loss:     {test_metrics['val_loss']:.4f}")
-    print(f"Test Accuracy: {test_metrics['val_acc']:.2f}%")
-    print(f"Test ROC AUC:  {test_metrics['val_roc_auc']:.4f}")
-    print(f"Test F1 Score: {test_metrics['val_f1']:.4f}")
+    # log results in a formatted way
+    logging.info("Final Test Set Metrics:")
+    logging.info("-" * 50)
+    logging.info(f"Test Loss:     {test_metrics['val_loss']:.4f}")
+    logging.info(f"Test Accuracy: {test_metrics['val_acc']:.2f}%")
+    logging.info(f"Test ROC AUC:  {test_metrics['val_roc_auc']:.4f}")
+    logging.info(f"Test F1 Score: {test_metrics['val_f1']:.4f}\n")
 
+    logging.info(f"Saving model to {PATH_FINAL_MODEL}...")
+
+    # save model
+    torch.save(model.state_dict(), PATH_FINAL_MODEL)
+
+    logging.info("Model saved.")
+    logging.info("Training complete.\n")
 
 # Main
 # ----
