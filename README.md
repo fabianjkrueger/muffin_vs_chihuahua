@@ -6,8 +6,9 @@
 
 ### Problem and Origin
 
-There is a semi popular meme about the claim that computer vision models have
-difficulties distinguishing models from chihuahuas.
+There is a semi popular [meme](https://knowyourmeme.com/memes/puppy-or-bagel)
+about the claim that computer vision models have
+difficulties distinguishing muffins from chihuahuas.
 
 <p align="center">
   <img src="images/muffin-meme2.jpg"
@@ -64,8 +65,8 @@ Or these ones even including different animals like kittens and birds.
 </p>
 
 One example of an early computer vision model actually misclassifying a cookie
-for a pet and a muffin for a dog breed was found when Steren's Labs tested
-Google's Cloud Vision API in 2016:
+for a pet and a muffin for a dog breed was found when [Steren's Labs tested
+Google's Cloud Vision API in 2016](https://labs.steren.fr/2016/03/27/trying-to-confuse-googles-vision-algorithms-with-dogs-and-muffins/).
 
 <p align="center">
   <img src="images/misclassification_googlecloudvision2016.png"
@@ -79,20 +80,25 @@ rest is at least in the good category."
 Basically the AI is mostly correct, but there are some misclassifications, too.
 Interestingly, they often align with the memes (as seen in the example).
 
-In 2017, TopBots tested six image classification APIs on this problem.
+In 2017, [TopBots tested six image classification APIs](
+    https://www.topbots.com/chihuahua-muffin-searching-best-computer-vision-api/
+) on this problem.
 They also found most predictions to be correct.
 Also here, the wrongly classified cases actually often sort of aligned with
 the meme.
 For example, there was a case of a muffin being classified as a dog snout.
 
-There has even been a paper about benchmarking multimodal LLMs on multi panel 
-images in 2024 referencing the meme in its title.
+There has even been a
+[paper about benchmarking multimodal LLMs on multi panel images](
+    https://aclanthology.org/2024.acl-long.370/
+) in 2024 referencing the meme in its title.
 They don't further discuss the problem,
 but it is a good example of how the problem is known.
 
-There is also a preprint paper from Mongolian University of Science and
-Technology and National University of Mongolia in 2018 about a deep learning
-approach to the problem.
+There is also a [preprint paper from Mongolian University of Science and
+Technology and National University of Mongolia](
+    https://arxiv.org/abs/1801.09573
+) in 2018 about a deep learning approach to the problem.
 They refer to this sort of problem as "very similar object recognition".
 They used a VGG19-like network with 20 layers
 containing 5 convolutional blocks followed by fully connected layers.
@@ -176,14 +182,8 @@ If you don't have git installed, you can get it
 ## Environment
 
 The environment is managed with conda.
-To build and activate the environment, you need to have a conda installation
-(such as conda, miniconda, mamba or miniforge).
-If you don't have a conda installation, please install one first.
-I recommend [miniforge](https://github.com/conda-forge/miniforge),
-because it is an open source lightweight version of conda.
-The dependencies are listed in the file `environment.yaml`.
 
-**To build and activate the environment, just run this:**
+To build and activate the environment, just run this:
 
 ```bash
 # build the environment from environment.yaml file
@@ -192,6 +192,13 @@ conda env create -f environment.yaml
 # activate the environment
 conda activate muffin_vs_chihuahua
 ```
+
+To build and activate the environment, you need to have a conda installation
+(such as conda, miniconda, mamba or miniforge).
+If you don't have a conda installation, please install one first.
+I recommend [miniforge](https://github.com/conda-forge/miniforge),
+because it is an open source lightweight version of conda.
+The dependencies are listed in the file `environment.yaml`.
 
 There is also a `requirements.txt` file in the `api` directory.
 It is used to install the dependencies for the API within the docker container.
@@ -307,9 +314,6 @@ I implemented a test case for you, so you can just host it and query it.
 You can find it in the notebook `notebooks/test_api.ipynb`.
 Just open that notebook and run the cells.
 You will find further information and instructions in the notebook.
-
-
-
 
 # Sources
 
