@@ -6,8 +6,7 @@
 
 ### Problem and Origin
 
-There is a semi popular [meme](https://knowyourmeme.com/memes/puppy-or-bagel)
-about the claim that computer vision models have
+There is a semi popular meme about the claim that computer vision models have
 difficulties distinguishing muffins from chihuahuas.
 
 <p align="center">
@@ -16,8 +15,8 @@ difficulties distinguishing muffins from chihuahuas.
         alt="Muffin or Chihuahua Meme">
 </p>
 
-For the first time, the meme came up in November 2015, and went viral in early
-2016.
+For the first time, the [meme](https://knowyourmeme.com/memes/puppy-or-bagel)
+came up in November 2015, and went viral in early 2016.
 
 As you can see, the muffins and the dogs do in fact look similar.
 If the photo was taken in the right angle, it wouldn't be hard to imagine a

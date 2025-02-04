@@ -7,3 +7,5 @@ data/
 models/model_checkpoint_*.pt
 models/final_model_checkpoint.pt
 
+# some quick notes
+TODO
