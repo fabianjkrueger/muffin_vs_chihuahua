@@ -1,16 +1,22 @@
-# ignore data directory due to large size
+# data directory 
+# due to large size
 # code for downloading the image data is provided
 data/
 
-# ignore model checkpoints
+# model checkpoints
 # only final model is used
 models/model_checkpoint_*.pt
 models/final_model_checkpoint.pt
 
-# ignore user images
+# user images
 # users can use their own images for querying the model on entirely unseen data
 # these images should not be uploaded 
 data/user_images/
+
+# python cache files
+__pycache__/
+*.py[cod]
+*$py.class
 
 # some quick notes
 TODO
