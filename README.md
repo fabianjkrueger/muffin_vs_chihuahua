@@ -164,7 +164,8 @@ Test F1 Score: 0.9899
 ```
 
 The model is deployed with FastAPI and can be hosted locally with
-Docker, from which it can be queried with HTTP requests.
+Docker, from which it can be queried with simple HTTP requests or a 
+Python client.
 
 ## How to get the code
 
