@@ -15,32 +15,18 @@ difficulties distinguishing models from chihuahuas.
         alt="Muffin or Chihuahua Meme">
 </p>
 
+For the first time, the meme came up in November 2015, and went viral in early
+2016.
+
 As you can see, the muffins and the dogs do in fact look similar.
-If the photo was taken in the right angle, and it isn't hard to imagine a
+If the photo was taken in the right angle, it wouldn't be hard to imagine a
 computer may have difficulties distinguishing between them.
-
-For us humans it is easy to distinguish animals from food, because we can rely
-on intuition, but a computer vision model has to learn the subtle differences
-of the patterns.
 Regarding their shape, spatial arrangement, texture and color, images of these
-objects can be very similar.
+objects can resemble each other a lot.
+A computer vision model has to learn the subtle differences
+of the patterns to classify them correctly.
 
-One example of an early computer vision model actually misclassifying a cookie
-for a pet was found when testing Google's Cloud Vision API in 2016:
-
-<p align="center">
-  <img src="images/misclassification_googlecloudvision2016.png"
-       width="50%"
-       alt="Google Cloud Vision API Misclassification">
-</p>
-
-But the question is if modern computer vision systems actually still
-struggle with this or if there is no truth to the meme anymore.
-Honestly, I am aware this problem is solved by now,
-but I think it's still worth exploring this meme using just a laptop
-and models you can fine-tune yourself.
-
-There are even more examples like the one with the muffins and chihuahuas.
+There are even more memes like the one with the muffins and chihuahuas.
 For example, this one in which poodles look like fried chicken.
 
 <p align="center">
@@ -52,7 +38,7 @@ For example, this one in which poodles look like fried chicken.
 Or these ones even including different animals like kittens and birds.
 
 <p align="center">
-  <table width="50%"
+  <table width="52%"
   align="center"
   border="0"
   cellspacing="0"
@@ -77,105 +63,103 @@ Or these ones even including different animals like kittens and birds.
   </table>
 </p>
 
+One example of an early computer vision model actually misclassifying a cookie
+for a pet and a muffin for a dog breed was found when Steren's Labs tested
+Google's Cloud Vision API in 2016:
 
-In this project, I want to explore this meme a little and see myself
-if there is any truth to it.
-Again, it is important to know that these memes arose in 2017.
-While models in 2016 may have had difficulties with this,
-modern models should be able to handle it.
-Let's find out!
+<p align="center">
+  <img src="images/misclassification_googlecloudvision2016.png"
+       width="50%"
+       alt="Google Cloud Vision API Misclassification">
+</p>
 
-Also regarding the description of how the model may be used:
+They tested multiple of the animals vs food memes and found that
+"for almost each set, there is one tile that is completely wrong, but the
+rest is at least in the good category."
+Basically the AI is mostly correct, but there are some misclassifications, too.
+Interestingly, they often align with the memes (as seen in the example).
 
-In the real world, I hardly doubt that the model which will be trained in this
-project is going to be useful for anything.
-I can hardly imagine a real world situation in which it may be used, or in which
-modern and more general computer vision models wouldn't probably be able to do 
-the job well enough.
-I doubt that there is a serious computer program in need of a model able to
-perform binary classification between muffins and chihuahuas.
-This is more like an experiment or hobby research project to explore
+In 2017, TopBots tested six image classification APIs on this problem.
+They also found most predictions to be correct.
+Also here, the wrongly classified cases actually often sort of aligned with
+the meme.
+For example, there was a case of a muffin being classified as a dog snout.
+
+There has even been a paper about benchmarking multimodal LLMs on multi panel 
+images in 2024 referencing the meme in its title.
+They don't further discuss the problem,
+but it is a good example of how the problem is known.
+
+There is also a preprint paper from Mongolian University of Science and
+Technology and National University of Mongolia in 2018 about a deep learning
+approach to the problem.
+They refer to this sort of problem as "very similar object recognition".
+They used a VGG19-like network with 20 layers
+containing 5 convolutional blocks followed by fully connected layers.
+Each class contained only 500 images,
+and they used data augmentation techniques,
+Training was done using transfer learning from ImageNet weights in a two-step
+process of pretraining and fine-tuning.
+With this, they achieved 97%+ accuracy on the test set.
+The authors themselves consider this study to have solved the problem:
+> "The proposed method is fully solved the very similar object recognition like
+> muffin or Chihuahua. It is the right solution for the such problem."
+
+Based on this, it has not really been an actual challenge for AI to distinguish
+between these things since at least 2016.
+Even back then, the AI makes very few mistakes.
+Interestingly, when it does make mistakes though, they often align with the
+meme, so there still may be something to it.
+In the meantime, the problem has been declared solved.
+
+But all these solutions come from the era of cloud computing, or are developed
+by companies or universities.
+The question is if modern computer vision systems you can train yourself at
+home on a laptop will still struggle with distinguishing muffins and chihuahuas
+or if there finally is no truth to the meme anymore at all.
+
+Some words regarding how the model may be used, because this is done as final
+project *Capstone 2* for the 2024 cohort of Data Talk Club's
+*Machine Learning Zoomcamp*.
+In the real world, I seriously doubt that the model, which will be trained in
+this project, is going to be used for anything.
+I can hardly imagine a real world situation in which it may actually be useful,
+or in which more general computer vision models wouldn't probably be
+able to do the job well enough
+and I doubt that there is a serious computer program in need of a model able to
+perform binary classification between just muffins and chihuahuas.
+This is more like an experiment or hobby research projec to explore
 different computer vision model's capacities and to get to the bottom of this
 meme.
 
-#### Further things to integrate in the README problem description
-
-
-
-
-
-
-
-
-
-- [An article about the meme in 2016](
-    https://www.mirror.co.uk/news/weird-news/muffins-chihuahuas-bizarre-picture-quiz-7539743
-)
-- [Steren's Labs tries to confuse Google's Vision algorithms with dogs and muffins](
-    https://labs.steren.fr/2016/03/27/trying-to-confuse-googles-vision-algorithms-with-dogs-and-muffins/
-)
-- testing different AIs on this problem:
-    - testing CloudSight (2017): classified it mostly correct
-    as tested here: https://blog.cloudsight.ai/chihuahua-or-muffin-1bdf02ec1680
-    - comprehensive test of six APIs (2017):
-    mostly correct, also some failures.
-    interestingly, the wrongly classified cases actually alighn with the meme,
-    so there was a case of a muffin being classified as a dog snout.
-    still, most of it was actually correct.
-    https://www.topbots.com/chihuahua-muffin-searching-best-computer-vision-api/
-    - testing Google's Cloud Vision API (2016):
-    "For almost each set, there is one tile that is completely wrong, but the
-    rest is at least in the good category.
-    Overall, I am really surprised how well it performs."
-    Basically the AI is mostly correct, but there are some misclassifications.
-    Interestingly, they often align with the memes (as seen in example).
-    https://labs.steren.fr/2016/03/27/trying-to-confuse-googles-vision-algorithms-with-dogs-and-muffins/
-- based on this literature and these tests out there, it has not really been an
-actual challenge for AI to distinguish between these things since at least 2016.
-Even back then, the AI makes very few mistakes.
-Still, interestingly, when it does make mistakes, they often align with the
-meme, so apparently there is some truth to it, and the objects don't just look
-similar to us humans.
-
-#### There are even papers out there mentioning this precise problem
-I'll just store them here for now, but will find a better place soon
-
-##### https://arxiv.org/abs/1801.09573
-
-- Title: "Deep Learning Approach for Very Similar Objects Recognition
-Application on Chihuahua and Muffin Problem"
-- They entitle this sort of problem as "very similar object recognition"
-- The authors themselves consider this study to have solved the problem:
-"The proposed method is fully solved the very similar object recognition like
-muffin or Chihuahua. It is the right solution for the such problem."
-- My opinion: It's a very cool project, and I love that it is documented.
-It is not a peer-reviewed paper, however.
-It is just in arXive.
-Does that matter? For this fun / meme project no!
-If I tried to conduct a proper scientific study myself, then perhaps yes.
-
-##### https://aclanthology.org/2024.acl-long.370/
-
-- Title: "Muffin or Chihuahua? Challenging Multimodal Large Language Models with
-Multipanel VQA"
-- This one is even peer reviewed and published in the legitimate journal
-"ACL Anthology"
-
 ### Solution, Model and Results
 
-I fine tuned a binary image classifier in PyTorch on the muffin vs chihuahua
-data set.
-It's a ResNet18 convolutional network.
-It is not too bad so far, but full evaluation on the test set is pending.
+To solve this problem, I fine tuned a ResNet18 convolutional neural network
+to perform binary classification between muffins and chihuahuas.
+The model was pretrained on ImageNet, fine tuned on 4730 and tested on 1183
+images.
+The classes are 'muffin' and 'chihuahua'.
+I searched for the best values for the learning rate and dropout rate, then
+experimented with replacing the original fully connected layer with lightly more
+complex structures.
+Finally, the unmodified model with default parameters turned out to perform
+best.
+This once again supports the just how well rounded and versatile the
+ResNet18 architecture is and how well its default parameters work are tuned.
+The model was fine tuned with a learning rate of 0.001 and no dropout for 18
+epochs, then early stopping triggered after seven consecutive epochs with no
+improvement in validation loss.
 
+This is the evaluation on the hold out test set:
+```python
+Test Loss:     0.0262
+Test Accuracy: 99.07%
+Test ROC AUC:  0.9996
+Test F1 Score: 0.9899
+```
 
-
-
-
-
-
-
-
+The model is deployed with FastAPI and can be hosted locally with
+Docker, from which it can be queried with HTTP requests.
 
 ## How to get the code
 
@@ -248,44 +232,49 @@ bash scripts.
 ### Process the Data
 
 Notebook: `notebooks/exploratory_data_analysis.ipynb`
+
 Here, the images are resized to 224x224 pixels.
-This step is necessary for the downstream training.
+This step is necessary data preparation for the downstream training.
 Beyond that, the data is explored and visualized.
-While this is not necessary for you to reproduce the results,
-it is useful for you to understand the data and the problem.
+
+To run the notebook, just open it in Jupyter Lab or Jupyter Notebook and run
+all cells.
 
 ## How to train the model
 
-This is the pipeline for training the model.
-If you just want to use the model, you don't need to run this.
-For that, you can just use the API as described in the next section.
+If you just want to use the model, you don't need to run this yourself.
+For that, you can just use the API as described in the next section
+or access it in the `models` directory.
 If you want to reproduce the results, you can run the code in this order:
 
-### Hyper Parameter Optimization
+### Hyper Parameter Optimization (Optional)
+
 Notebook: `notebooks/training.ipynb`
+
 This notebook conducts a hyper parameter optimization.
 It is not necessary for you to reproduce the results,
 but it is useful for you to understand the problem and the solution.
 The best hyper parameters were already determined in the notebook and
 applied to the training script.
-This one runs quite a while, so I do not recommend running it.
+This one runs quite a while, because multiple models are trained,
+so I do not recommend running it.
 
-### Train the model
-The final model is saved to the `models` directory.
-It is named `final_model.pt`.
-You don't have to run the trainig logic, because you can just access the
-model in the repo.
+### Train the Final Model
 
-However, if you do want to train it yourself, use the script
-`scripts/train.py`.
-Just run it from the command line with `python scripts/train.py`.
+Script: `scripts/train.py`
+
 This trains the final model with the best hyperparameters determined in the
-previous step.
-Output is logged to the terminal
-and the file `logs/final_model_train.log`.
+previous step and this evaluates it on the test set.
 
-This also evaluates the model on the test set and logs the results to the
-file `logs/final_model_test.log`.
+Just run it from the command line with:
+
+```bash
+# train the final model
+python scripts/train.py
+```
+
+The output is logged to the terminal and the file `logs/final_model_train.log`.
+The final model is saved to `models/final_model.pt`.
 
 ## Deploy the model
 
@@ -320,40 +309,30 @@ Just open that notebook and run the cells.
 You will find further information and instructions in the notebook.
 
 
-# TODO
 
-- Finish texts in the training notebook
-- Finalize description of the project
-  - Problem is described in the README so it's clear what the problem is and how
-  the solution will be used
-- Make the notebook for testing the API a bit more user friendly
-  - Save one or a few images to the `images` directory and load them from there
-    so that the user can run it without having to download the entire dataset
-
-
-- Check once again if everything works and is reproducible
-  - Making the environment from the yaml file
-  - Running the scripts
-  - Running the notebooks
-  - Running the API
-  - Querying the API
-
-- Funny part of the project
-  - Split the meme into the individual images
-  - Query the model with all of them and the combined one to see how it does
-  - Declare the problem solved or not
 
 # Sources
 
-- [An article about the meme in 2016](
+- [Know Your Meme: Puppy or Bagel Page](
+    https://knowyourmeme.com/memes/puppy-or-bagel
+)
+- [An article about the meme going viral in 2016](
     https://www.mirror.co.uk/news/weird-news/muffins-chihuahuas-bizarre-picture-quiz-7539743
 )
 - [Steren's Labs tries to confuse Google's Vision algorithms with dogs and muffins](
     https://labs.steren.fr/2016/03/27/trying-to-confuse-googles-vision-algorithms-with-dogs-and-muffins/
 )
-- [CloudSight API tested on the meme](
+- [Someone tested CloudSight API on the meme](
     https://blog.cloudsight.ai/chihuahua-or-muffin-1bdf02ec1680
 )
-- [TopBots tests a wide range of APIs in 2017](
+- [TopBots tested a wide range of APIs in 2017](
     https://www.topbots.com/chihuahua-muffin-searching-best-computer-vision-api/
+)
+- [Muffin or Chihuahua? Challenging Multimodal Large Language Models with
+Multipanel VQA](
+    https://aclanthology.org/2024.acl-long.370/
+)
+- [Deep Learning Approach for Very Similar Objects Recognition
+Application on Chihuahua and Muffin Problem](
+    https://arxiv.org/abs/1801.09573
 )
