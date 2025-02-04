@@ -7,5 +7,10 @@ data/
 models/model_checkpoint_*.pt
 models/final_model_checkpoint.pt
 
+# ignore user images
+# users can use their own images for querying the model on entirely unseen data
+# these images should not be uploaded 
+data/user_images/
+
 # some quick notes
 TODO
