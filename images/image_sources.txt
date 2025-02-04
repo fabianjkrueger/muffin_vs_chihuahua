@@ -8,3 +8,15 @@
 - Shiba Inu or Marshmallow: https://imgix.ranker.com/user_node_img/50060/1001184433/original/1-photo-u1?auto=format&q=60&fit=crop&fm=pjpg&dpr=2&w=500
 - Kitten or Ice Cream: https://imgix.ranker.com/user_node_img/50060/1001184412/original/1-photo-u1?auto=format&q=60&fit=crop&fm=pjpg&dpr=2&w=500
 - Parrot or Guacamole: https://imgix.ranker.com/user_node_img/50060/1001184421/original/1-photo-u1?auto=format&q=60&fit=crop&fm=pjpg&dpr=2&w=500
+
+- Images from the test set of the original data set https://www.kaggle.com/datasets/samuelcortinhas/muffin-vs-chihuahua-image-classification/download?datasetVersionNumber=1
+  - muffin
+    - img_0_105.jpg
+    - img_1_60.jpg
+    - img_2_523.jpg
+    - img_4_1017.jpg
+  - chihuahua
+    - img_0_18.jpg
+    - img_1_144.jpg
+    - img_1_428.jpg
+    - img_2_831.jpg
