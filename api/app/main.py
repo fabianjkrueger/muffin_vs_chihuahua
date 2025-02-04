@@ -15,7 +15,10 @@ logger = logging.getLogger(__name__)
 # initialize FastAPI app
 app = FastAPI(
     title="Image Classification API",
-    description="API for classifying images using PyTorch model",
+    description=(
+        "API for classifying images of muffins and chihuahuas using a "
+        "fine-tuned ResNet-18 PyTorch model"
+    ),
     version="1.0.0"
 )
 
