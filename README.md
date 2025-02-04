@@ -308,11 +308,12 @@ it is running.
 
 ### Query the API
 
-The API can be queried with a simple HTTP request.
-I implemented a test case for you, so you can just host it and query it.
-You can find it in the notebook `notebooks/test_api.ipynb`.
+The API can be queried using a client or simple HTTP requesta.
+I implemented some instructions, examples and test cases for you, so you can
+just host it and query it.
+You can find these in the notebook `notebooks/test_api.ipynb`.
 Just open that notebook and run the cells.
-You will find further information and instructions in the notebook.
+You will find all further information and instructions there.
 
 # Sources
 
