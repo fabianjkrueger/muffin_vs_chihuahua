@@ -18,5 +18,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# mac specific files
+.DS_Store
+
 # some quick notes
 TODO

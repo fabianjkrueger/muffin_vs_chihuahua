@@ -20,3 +20,7 @@
     - img_1_144.jpg
     - img_1_428.jpg
     - img_2_831.jpg
+
+- tiles of the original panel image meme:
+  - tile1_1.png to tile4_4.png
+  - cut from the original meme (large size): https://miro.medium.com/v2/resize:fit:752/0*OsSLuNhChRgEWWZM.jpg

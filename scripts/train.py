@@ -3,9 +3,15 @@ Goal: Train and evaluate the final model
 
 This script handles the training of the final model using previously
 determined hyper parameters from train.ipynb.
+Here, the full training set is used, (training plus validation sets from hyper
+parameter tuning), and the model is trained for 50 epochs with early stopping
+patience of 7 and a min delta of 0.001.
 
 The training process is logged to the file logs/final_model_train.log.
 The path is specified in the PATH_LOGS variable, and can be adapted.
+
+It will then be evaluated on the test set, and the results will be logged to the
+same file.
 """
 
 # Dependencies
